@@ -37,13 +37,11 @@ def is_win(board):
 ##AI Engine
 
 def march(board,y,x,dy,dx,length):
-    '''
-    tìm vị trí xa nhất trong dy,dx trong khoảng length
-
-    '''
+    # '''
+    #
+    # '''
     yf = y + length*dy 
     xf = x + length*dx
-    # chừng nào yf,xf không có trong board
     while not is_in(board,yf,xf):
         yf -= dy
         xf -= dx
@@ -51,10 +49,9 @@ def march(board,y,x,dy,dx,length):
     return yf,xf
     
 def score_ready(scorecol):
-    '''
-    Khởi tạo hệ thống điểm
-
-    '''
+    # '''
+    #
+    # '''
     sumcol = {0: {},1: {},2: {},3: {},4: {},5: {},-1: {}}
     for key in scorecol:
         for score in scorecol[key]:
@@ -66,9 +63,8 @@ def score_ready(scorecol):
     return sumcol
     
 def sum_sumcol_values(sumcol):
-    '''
-    hợp nhất điểm của mỗi hướng
-    '''
+    # '''
+    # '''
     
     for key in sumcol:
         if key == 5:
@@ -89,10 +85,9 @@ def score_of_list(lis,col):
         return filled
 
 def row_to_list(board,y,x,dy,dx,yf,xf):
-    '''
-    trả về list của y,x từ yf,xf
-    
-    '''
+    # '''
+    #
+    # '''
     row = []
     while y != yf + dy or x !=xf + dx:
         row.append(board[y][x])
@@ -101,10 +96,9 @@ def row_to_list(board,y,x,dy,dx,yf,xf):
     return row
     
 def score_of_row(board,cordi,dy,dx,cordf,col):
-    '''
-    trả về một list với mỗi phần tử đại diện cho số điểm của 5 khối
-
-    '''
+    # '''
+    #
+    # '''
     colscores = []
     y,x = cordi
     yf,xf = cordf
@@ -116,12 +110,10 @@ def score_of_row(board,cordi,dy,dx,cordf,col):
     return colscores
 
 def score_of_col(board,col):
-    '''
-    tính toán điểm số mỗi hướng của column dùng cho is_win;
-    '''
+    # '''
+    # '''
 
     f = len(board)
-    #scores của 4 hướng đi
     scores = {(0,1):[],(-1,1):[],(1,0):[],(1,1):[]}
     for start in range(len(board)):
         scores[(0,1)].extend(score_of_row(board,(start, 0), 0, 1,(start,f-1), col))
@@ -136,10 +128,8 @@ def score_of_col(board,col):
     return score_ready(scores)
     
 def score_of_col_one(board,col,y,x):
-    '''
-    trả lại điểm số của column trong y,x theo 4 hướng,
-    key: điểm số khối đơn vị đó -> chỉ ktra 5 khối thay vì toàn bộ
-    '''
+    # '''
+    # '''
     
     scores = {(0,1):[],(-1,1):[],(1,0):[],(1,1):[]}
     
@@ -153,24 +143,16 @@ def score_of_col_one(board,col,y,x):
     
     return score_ready(scores)
     
-def possible_moves(board):  
-    '''
-    khởi tạo danh sách tọa độ có thể có tại danh giới các nơi đã đánh phạm vi 3 đơn vị
-    '''
-    #mảng taken lưu giá trị của người chơi và của máy trên bàn cờ
+def possible_moves(board):
     taken = []
-    # mảng directions lưu hướng đi (8 hướng)
     directions = [(0,1),(0,-1),(1,0),(-1,0),(1,1),(-1,-1),(-1,1),(1,-1)]
-    # cord: lưu các vị trí không đi 
     cord = {}
     
     for i in range(len(board)):
         for j in range(len(board)):
             if board[i][j] != ' ':
                 taken.append((i,j))
-    ''' duyệt trong hướng đi và mảng giá trị trên bàn cờ của người chơi và máy, kiểm tra nước không thể đi(trùng với 
-    nước đã có trên bàn cờ)
-    '''
+    # '''
     for direction in directions:
         dy,dx = direction
         for coord in taken:
@@ -182,9 +164,8 @@ def possible_moves(board):
     return cord
     
 def TF34score(score3,score4):
-    '''
-    trả lại trường hợp chắc chắn có thể thắng(4 ô liên tiếp)
-    '''
+    # '''
+    # '''
     for key4 in score4:
         if score4[key4] >=1:
             for key3 in score3:
@@ -193,16 +174,13 @@ def TF34score(score3,score4):
     return False
     
 def stupid_score(board,col,anticol,y,x):
-    '''
-    cố gắng di chuyển y,x
-    trả về điểm số tượng trưng lợi thế 
-    '''
+    # '''
+    # '''
     
     global colors
     M = 1000
     res,adv, dis = 0, 0, 0
-    
-    #tấn công
+
     board[y][x]=col
     #draw_stone(x,y,colors[col])
     sumcol = score_of_col_one(board,col,y,x)       
@@ -211,8 +189,7 @@ def stupid_score(board,col,anticol,y,x):
     sum_sumcol_values(sumcol)
     #{0: 0, 1: 15, 2: 0, 3: 0, 4: 0, 5: 0, -1: 0}
     adv +=  sumcol[-1] + sumcol[1] + 4*sumcol[2] + 8*sumcol[3] + 16*sumcol[4]
-    
-    #phòng thủ
+
     board[y][x]=anticol
     sumanticol = score_of_col_one(board,anticol,y,x)  
     d = winning_situation(sumanticol)
@@ -226,12 +203,9 @@ def stupid_score(board,col,anticol,y,x):
     return res
     
 def winning_situation(sumcol):
-    '''
-    trả lại tình huống chiến thắng dạng như:
-    {0: {}, 1: {(0, 1): 4, (-1, 1): 3, (1, 0): 4, (1, 1): 4}, 2: {}, 3: {}, 4: {}, 5: {}, -1: {}}
-    1-5 lưu điểm có độ nguy hiểm từ thấp đến cao,
-    -1 là rơi vào trạng thái tồi, cần phòng thủ
-    '''
+    # '''
+    # {0: {}, 1: {(0, 1): 4, (-1, 1): 3, (1, 0): 4, (1, 1): 4}, 2: {}, 3: {}, 4: {}, 5: {}, -1: {}}
+    # '''
     
     if 1 in sumcol[5].values():
         return 5
@@ -246,9 +220,8 @@ def winning_situation(sumcol):
     return 0
     
 def best_move(board,col):
-    '''
-    trả lại điểm số của mảng trong lợi thế của từng màu
-    '''
+    # '''
+    # '''
     if col == 'w':
         anticol = 'b'
     else:
@@ -256,7 +229,6 @@ def best_move(board,col):
         
     movecol = (0,0)
     maxscorecol = ''
-    # kiểm tra nếu bàn cờ rỗng thì cho vị trí random nếu không thì đưa ra giá trị trên bàn cờ nên đi 
     if is_empty(board):
         movecol = ( int((len(board))*random.random()),int((len(board[0]))*random.random()))
     else:
@@ -380,9 +352,6 @@ def initialize(size):
     turtle.mainloop()
     
 def getindexposition(x,y):
-    '''
-    lấy index
-    '''
     intx,inty = int(x),int(y)
     dx,dy = x-intx,y-inty
     if dx > 0.5:
