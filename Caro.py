@@ -1,6 +1,7 @@
 import turtle
 import random
 import time
+import Ve
 
 count = 0  # chan x danh, le O danh
 dtx = [1, 1, 1, 0]
@@ -34,7 +35,20 @@ def cuoiCungPhiaPhai(x, y, dx, dy):
     return x, y
 
 
-def chuyenDuongThangRaMang(x, y, dx, dy):
+def chuyenDuongThangRaMangToaDo(x, y, dx, dy):
+    global board
+    arr = []
+    xt, yt = cuoiCungPhiaTrai(x, y, dx, dy)
+    xp, yp = cuoiCungPhiaPhai(x, y, dx, dy)
+    arr.append((xt, yt))
+    while xt != xp or yt != yp:
+        xt = xt + dx
+        yt = yt + dy
+        arr.append((xt, yt))
+    return arr
+
+
+def chuyenDuongThangRaMangGiaTri(x, y, dx, dy):
     global board
     arr = []
     xt, yt = cuoiCungPhiaTrai(x, y, dx, dy)
@@ -48,73 +62,90 @@ def chuyenDuongThangRaMang(x, y, dx, dy):
     return arr
 
 
-def diemCuaDay(arr):
-    if count % 2 == 0:
-        return arr.count('x')
-    else:
-        return arr.count('o')
+def diemCuaDay(arr, type):
+    trong = arr.count(' ')
+    daDanh = arr.count(type)
+    if trong + daDanh < 5:
+        return -1
+    return daDanh
 
 
-def kiemTraChienThangCuaDuongThang(arr):
+def tinhDiem(arr, type):
     res = []
     for i in range(len(arr) - 4):
-        res.append(diemCuaDay(arr[i:i + 5]))
+        res.append(diemCuaDay(arr[i:i + 5], type))
     return res
 
 
-def ChienThang(x, y):
+def luuListDiem(x, y, type):
     global dtx, dty
+    arr = {-1: 0, 0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0}
     for i in range(len(dtx)):
-            MangCuaDT = chuyenDuongThangRaMang(x, y, dtx[i], dty[i])
-            if kiemTraChienThangCuaDuongThang(MangCuaDT).count(5) > 0:
-                if count % 2 == 0:
-                    print 'X thang'
-                    return
-                else:
-                    print 'O thang'
-                    return
+        MangDT = chuyenDuongThangRaMangGiaTri(x, y, dtx[i], dty[i])
+        listDiem = tinhDiem(MangDT, type)
+        for i in arr:
+            arr[i] += listDiem.count(i)
+    return arr
+
+
+def DiemNuocDi(x, y):
+    tc = 0
+    pt = 0
+    board[x][y] = 'o'
+    listDiem = luuListDiem(x,y,'o')
+    board[x][y] = ' '
+    tc += listDiem[-1] + listDiem[1] + 4*listDiem[2] + 8*listDiem[3] + 16*listDiem[4] + 50*listDiem[5]
+    board[x][y] = 'x'
+    listDiem = luuListDiem(x,y,'x')
+    pt += 10 + listDiem[-1] + listDiem[1] + 4 * listDiem[2] + 8 * listDiem[3] + 16 * listDiem[4] + 50*listDiem[5]
+    board[x][y] = ' '
+    return tc + pt
+
+def nuocDiTotNhat():
+    global colors, board
+    listToaDo = toaDoCoTheDanh()
+    max = 0
+    (x,y) = (0,0)
+    for (_x, _y) in listToaDo:
+        Diem = DiemNuocDi(_x, _y)
+        if(Diem > max):
+            max = Diem
+            (x, y) = (_x, _y)
+    board[x][y] = 'o'
+    Ve.O(x,y, colors)
+
+def toaDoCoTheDanh():
+    global board, dtx, dty, size
+    listToaDoTrong = []
+    listToaDoDaDanh = []
+    for x in range(size):
+        for y in range(size):
+            if board[x][y] is not ' ':
+                listToaDoDaDanh.append((x, y))
+    for (x, y) in listToaDoDaDanh:
+        for i in range(0, len(dtx)):
+            ToaDoTheoDT = chuyenDuongThangRaMangToaDo(x, y, dtx[i], dty[i])
+            for (_x, _y) in ToaDoTheoDT:
+                if (_x, _y) not in listToaDoDaDanh and (_x, y) not in listToaDoTrong:
+                    listToaDoTrong.append((_x, _y))
+    return listToaDoTrong
+
+
+
+
+
 
 
 def click(x, y):
     x = int(x)
     y = int(y)
+    global colors
+
     global size, count, board
     if 0 <= x < size and 0 <= y < size and board[x][y] == ' ':
-        if count % 2 == 0:
-            veX(x, y)
-            board[x][y] = 'x'
-        else:
-            veO(x, y)
-            board[x][y] = 'o'
-        # print board
-        ChienThang(x,y)
-        count = count + 1
-
-
-def veX(x, y):
-    global colors
-    colors['x'].penup()
-    colors['x'].goto(x + 0.3, y + 0.3)
-    colors['x'].pendown()
-    colors['x'].goto(x + 0.7, y + 0.7)
-    colors['x'].up()
-    colors['x'].goto(x + 0.7, y + 0.3)
-    colors['x'].pendown()
-    colors['x'].goto(x + 0.3, y + 0.7)
-    colors['x'].up()
-    colors['x'].ht()
-
-
-def veO(x, y):
-    global colors
-    colors['o'].penup()
-    colors['o'].goto(x + 0.5, y + 0.15)
-    colors['o'].pendown()
-    colors['o'].begin_fill()
-    colors['o'].circle(0.35)
-    colors['o'].end_fill()
-    colors['o'].penup()
-    colors['x'].ht()
+        Ve.X(x, y, colors)
+        board[x][y] = 'x'
+        nuocDiTotNhat()
 
 
 def vebanco(s):

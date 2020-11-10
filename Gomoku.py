@@ -53,14 +53,14 @@ def score_ready(scorecol):
     #
     # '''
     sumcol = {0: {},1: {},2: {},3: {},4: {},5: {},-1: {}}
-    for key in scorecol:
+    for key in scorecol:        #[0,1] = {4,3,1,2}
         for score in scorecol[key]:
             if key in sumcol[score]:
                 sumcol[score][key] += 1
             else:
                 sumcol[score][key] = 1
             
-    return sumcol
+    return sumcol # sumcol[4][1,0]=2
     
 def sum_sumcol_values(sumcol):
     # '''
@@ -183,7 +183,8 @@ def stupid_score(board,col,anticol,y,x):
 
     board[y][x]=col
     #draw_stone(x,y,colors[col])
-    sumcol = score_of_col_one(board,col,y,x)       
+    sumcol = score_of_col_one(board,col,y,x)
+    print sumcol
     a = winning_situation(sumcol)
     adv += a * M
     sum_sumcol_values(sumcol)
@@ -232,7 +233,7 @@ def best_move(board,col):
     if is_empty(board):
         movecol = ( int((len(board))*random.random()),int((len(board[0]))*random.random()))
     else:
-        moves = possible_moves(board)
+        moves = possible_moves(board)   # luu lai toan bo cac diem chua danh ban kinh 4 o voi nhung diem danh r
 
         for move in moves:
             y,x = move
