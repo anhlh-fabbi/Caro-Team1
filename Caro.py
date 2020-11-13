@@ -4,8 +4,8 @@ import time
 import Ve
 
 count = 0  # chan x danh, le O danh
-dtx = [1, 1, 1, 0]
-dty = [1, -1, 0, 1]
+dtx = [0, 1, 1, 1]
+dty = [1, 0, 1, -1]
 
 
 def banCoRong():
@@ -67,6 +67,7 @@ def diemCuaDay(arr, type):
     daDanh = arr.count(type)
     if trong + daDanh < 5:
         return -1
+    # print daDanh
     return daDanh
 
 
@@ -94,10 +95,13 @@ def DiemNuocDi(x, y):
     board[x][y] = 'o'
     listDiem = luuListDiem(x,y,'o')
     board[x][y] = ' '
-    tc += listDiem[-1] + listDiem[1] + 4*listDiem[2] + 8*listDiem[3] + 16*listDiem[4] + 50*listDiem[5]
+    tc += listDiem[-1] + listDiem[1] + 4*listDiem[2] + 9*listDiem[3] + 20*listDiem[4] + 50*listDiem[5]
     board[x][y] = 'x'
     listDiem = luuListDiem(x,y,'x')
-    pt += 10 + listDiem[-1] + listDiem[1] + 4 * listDiem[2] + 8 * listDiem[3] + 16 * listDiem[4] + 50*listDiem[5]
+    print (str(x) + " " + str(y))
+    print listDiem
+    print ('\n')
+    pt += -1 + listDiem[-1] + listDiem[1] + 4 * listDiem[2] + 9 * listDiem[3] + 20 * listDiem[4] + 50*listDiem[5]
     board[x][y] = ' '
     return tc + pt
 
@@ -108,6 +112,7 @@ def nuocDiTotNhat():
     (x,y) = (0,0)
     for (_x, _y) in listToaDo:
         Diem = DiemNuocDi(_x, _y)
+        # print (str(_x) + " " + str(_y) + ": " + str(Diem))
         if(Diem > max):
             max = Diem
             (x, y) = (_x, _y)
@@ -126,8 +131,9 @@ def toaDoCoTheDanh():
         for i in range(0, len(dtx)):
             ToaDoTheoDT = chuyenDuongThangRaMangToaDo(x, y, dtx[i], dty[i])
             for (_x, _y) in ToaDoTheoDT:
-                if (_x, _y) not in listToaDoDaDanh and (_x, y) not in listToaDoTrong:
+                if (_x, _y) not in listToaDoDaDanh and (_x, _y) not in listToaDoTrong:
                     listToaDoTrong.append((_x, _y))
+    # print listToaDoTrong
     return listToaDoTrong
 
 
@@ -146,6 +152,7 @@ def click(x, y):
         Ve.X(x, y, colors)
         board[x][y] = 'x'
         nuocDiTotNhat()
+        print("\n\n")
 
 
 def vebanco(s):
