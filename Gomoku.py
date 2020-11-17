@@ -184,7 +184,6 @@ def stupid_score(board,col,anticol,y,x):
     board[y][x]=col
     #draw_stone(x,y,colors[col])
     sumcol = score_of_col_one(board,col,y,x)
-    print sumcol
     a = winning_situation(sumcol)
     adv += a * M
     sum_sumcol_values(sumcol)

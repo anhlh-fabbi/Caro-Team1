@@ -8,6 +8,38 @@ dtx = [0, 1, 1, 1]
 dty = [1, 0, 1, -1]
 
 
+def chuyenDoiDiem(listDiem):
+    # print(listDiem)
+    tungdiem = {0: {},1: {},2: {},3: {},4: {},5: {},-1: {}}
+    for key in listDiem:
+        for diem in listDiem[key]:
+            if key in tungdiem[diem]:
+                tungdiem[diem][key] += 1
+            else:
+                tungdiem[diem][key] = 1
+    return tungdiem
+def diem34(diem3, diem4):
+    for key4 in diem4:
+        if diem4[key4] >=1:
+            for key3 in diem3:
+                if key3 != key4 and diem3[key3] >=2:
+                        return True
+    return False
+
+def ttChienThang(listDiem):
+    listDiem = chuyenDoiDiem(listDiem)
+    if 1 in listDiem[5].values():
+        return 5
+    elif len(listDiem[4]) >= 2 or (len(listDiem[4])) >= 1 and max(listDiem[4].values()) >= 2:
+        return 4
+    elif diem34(listDiem[3], listDiem[4]):
+        return 4
+    else:
+        diem3 =sorted(listDiem[3].values(), reverse=True)
+        if len(diem3) >= 2 and diem3[0] >= diem3[1] >= 2:
+            return 3
+    return 0
+
 def banCoRong():
     global size
     board = []
@@ -81,28 +113,31 @@ def tinhDiem(arr, type):
 def luuListDiem(x, y, type):
     global dtx, dty
     arr = {-1: 0, 0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0}
+    Diem = {(0,1): [], (1,0): [], (1,1): [], (1,-1): []}
     for i in range(len(dtx)):
         MangDT = chuyenDuongThangRaMangGiaTri(x, y, dtx[i], dty[i])
         listDiem = tinhDiem(MangDT, type)
+        Diem[(dtx[i], dty[i])]= listDiem
         for i in arr:
             arr[i] += listDiem.count(i)
-    return arr
+    return arr, Diem
 
 
 def DiemNuocDi(x, y):
     tc = 0
     pt = 0
     board[x][y] = 'o'
-    listDiem = luuListDiem(x,y,'o')
+    listDiem, listChienThang  = luuListDiem(x,y,'o')
     board[x][y] = ' '
-    tc += listDiem[-1] + listDiem[1] + 4*listDiem[2] + 9*listDiem[3] + 20*listDiem[4] + 50*listDiem[5]
+    tc += ttChienThang(listChienThang)*5000 + listDiem[-1] + listDiem[1] + 4*listDiem[2] + 8*listDiem[3] + 16*listDiem[4]
     board[x][y] = 'x'
-    listDiem = luuListDiem(x,y,'x')
-    print (str(x) + " " + str(y))
-    print listDiem
-    print ('\n')
-    pt += -1 + listDiem[-1] + listDiem[1] + 4 * listDiem[2] + 9 * listDiem[3] + 20 * listDiem[4] + 50*listDiem[5]
+    listDiem, listChienThang = luuListDiem(x,y,'x')
+    # print (str(x) + " " + str(y))
+    # print (listDiem)
+    # print ('\n')
+    pt += ttChienThang(listChienThang)*4500 + listDiem[-1] + listDiem[1] + 4 * listDiem[2] + 8 * listDiem[3] + 16 * listDiem[4]
     board[x][y] = ' '
+    print(str(x) + " " + str(y) + ": " + str(tc+pt))
     return tc + pt
 
 def nuocDiTotNhat():
@@ -112,11 +147,11 @@ def nuocDiTotNhat():
     (x,y) = (0,0)
     for (_x, _y) in listToaDo:
         Diem = DiemNuocDi(_x, _y)
-        # print (str(_x) + " " + str(_y) + ": " + str(Diem))
         if(Diem > max):
             max = Diem
             (x, y) = (_x, _y)
     board[x][y] = 'o'
+    print("\n\n")
     Ve.O(x,y, colors)
 
 def toaDoCoTheDanh():
@@ -125,7 +160,7 @@ def toaDoCoTheDanh():
     listToaDoDaDanh = []
     for x in range(size):
         for y in range(size):
-            if board[x][y] is not ' ':
+            if board[x][y] != ' ':
                 listToaDoDaDanh.append((x, y))
     for (x, y) in listToaDoDaDanh:
         for i in range(0, len(dtx)):
@@ -152,7 +187,7 @@ def click(x, y):
         Ve.X(x, y, colors)
         board[x][y] = 'x'
         nuocDiTotNhat()
-        print("\n\n")
+        # print("\n\n")
 
 
 def vebanco(s):
