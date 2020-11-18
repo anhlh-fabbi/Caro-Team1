@@ -41,7 +41,7 @@ def ttChienThang(listDiem):
     listDiem = chuyenDoiDiem(listDiem)
     if 1 in listDiem[5].values():
         return 5
-    elif len(listDiem[4]) >= 2 or (len(listDiem[4])) >= 1 and max(listDiem[4].values()) >= 2:
+    elif len(listDiem[4]) >= 2 or (len(listDiem[4])) == 1 and max(listDiem[4].values()) >= 2:
         return 4
     elif diem34(listDiem[3], listDiem[4]):
         return 4
@@ -141,15 +141,13 @@ def DiemNuocDi(x, y):
     board[x][y] = 'o'
     listDiem, listChienThang = luuListDiem(x, y, 'o')
     board[x][y] = ' '
-    tc += ttChienThang(listChienThang) * 5000 + listDiem[-1] + listDiem[1] + 4 * listDiem[2] + 8 * listDiem[3] + 16 * \
-          listDiem[4]
+    tc += ttChienThang(listChienThang) * 5000 + listDiem[-1] + listDiem[1] + 4 * listDiem[2] + 8 * listDiem[3] + 16 * listDiem[4]
     board[x][y] = 'x'
     listDiem, listChienThang = luuListDiem(x, y, 'x')
     # print (str(x) + " " + str(y))
     # print (listDiem)
     # print ('\n')
-    pt += ttChienThang(listChienThang) * 4500 + listDiem[-1] + listDiem[1] + 4 * listDiem[2] + 8 * listDiem[3] + 16 * \
-          listDiem[4]
+    pt += ttChienThang(listChienThang) * 4500 + listDiem[-1] + listDiem[1] + 4 * listDiem[2] + 8 * listDiem[3] + 16 * listDiem[4]
     board[x][y] = ' '
     print(str(x) + " " + str(y) + ": " + str(tc + pt))
     return tc + pt
