@@ -68,10 +68,10 @@ def ChienThang(x, y):
             MangCuaDT = chuyenDuongThangRaMang(x, y, dtx[i], dty[i])
             if kiemTraChienThangCuaDuongThang(MangCuaDT).count(5) > 0:
                 if count % 2 == 0:
-                    print 'X thang'
+                    print ('X thang')
                     return
                 else:
-                    print 'O thang'
+                    print ('O thang')
                     return
 
 
