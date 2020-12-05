@@ -41,7 +41,7 @@ def ttChienThang(listDiem):
     listDiem = chuyenDoiDiem(listDiem)
     if 1 in listDiem[5].values():
         return 5
-    elif len(listDiem[4]) >= 2 or (len(listDiem[4])) == 1 and max(listDiem[4].values()) >= 2:
+    elif len(listDiem[4]) >= 2 or (len(listDiem[4]) == 1 and max(listDiem[4].values())) >= 2:
         return 4
     elif diem34(listDiem[3], listDiem[4]):
         return 4
@@ -149,7 +149,7 @@ def DiemNuocDi(x, y):
     # print ('\n')
     pt += ttChienThang(listChienThang) * 4500 + listDiem[-1] + listDiem[1] + 4 * listDiem[2] + 8 * listDiem[3] + 16 * listDiem[4]
     board[x][y] = ' '
-    print(str(x) + " " + str(y) + ": " + str(tc + pt))
+    # print(str(x) + " " + str(y) + ": " + str(tc + pt))
     return tc + pt
 
 
@@ -188,12 +188,16 @@ def toaDoCoTheDanh():
 
 
 def click(x, y):
-    x = int(x)
-    y = int(y)
+    print(str(x) + " " + str(y))
+    if(x >= 0 and y >= 0):
+        x = int(x)
+        y = int(y)
+    else:
+        return 0
     global colors, ChienThang
 
     global size, count, board
-    if 0 <= x < size and 0 <= y < size and board[x][y] == ' ' and ChienThang == False:
+    if x < size and y < size and board[x][y] == ' ' and ChienThang == False:
         Ve.X(x, y, colors)
         board[x][y] = 'x'
         if(KTChienThang(x, y, 'x') == True):
